@@ -7,11 +7,43 @@ const app = express();
 const SPREADSHEET_ID = '1mU3BXoq_EtW5Zm3NLhrupJtfwW0olBTlRotJA0SbJNI';
 const SHEET_NAME = 'Jobberman Daily Jobs';
 
+// async function writeToGoogleSheet(data) {
+//   const auth = new google.auth.JWT(
+//     keys.client_email,
+//     null,
+//     keys.private_key,
+//     ['https://www.googleapis.com/auth/spreadsheets']
+//   );
+
+//   const sheets = google.sheets({ version: 'v4', auth });
+//   const timestamp = new Date().toISOString();
+
+//   const rows = data.map(job => [
+//     'Jobberman',
+//     job.title,
+//     job.url,
+//     job.company || '',
+//     job.location || '',
+//     job.description || '',
+//     timestamp
+//   ]);
+
+//   await sheets.spreadsheets.values.append({
+//     spreadsheetId: SPREADSHEET_ID,
+//     range: `${SHEET_NAME}!A:G`,
+//     valueInputOption: 'RAW',
+//     insertDataOption: 'INSERT_ROWS',
+//     resource: {
+//       values: rows
+//     }
+//   });
+// }
+
 async function writeToGoogleSheet(data) {
   const auth = new google.auth.JWT(
-    keys.client_email,
+    process.env.GOOGLE_CLIENT_EMAIL,
     null,
-    keys.private_key,
+    process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     ['https://www.googleapis.com/auth/spreadsheets']
   );
 
@@ -38,6 +70,7 @@ async function writeToGoogleSheet(data) {
     }
   });
 }
+
 
 app.get('/', async (req, res) => {
   try {
